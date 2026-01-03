@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>راديو الشيخ المنشاوي | مجود</title>
+<meta name="theme-color" content="#001a10">
+<link rel="manifest" href="manifest.json">
+<style>
+/* إعادة الضبط */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: radial-gradient(circle, #001a10, #000);
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    direction: rtl;
+}
+
+/* تصميم الراديو */
+.radio-container {
+    background: rgba(0, 20, 10, 0.9);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    padding: 25px;
+    box-shadow: 
+        0 0 30px rgba(0, 255, 153, 0.7),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 153, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* تأثير قديم */
+.radio-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #00ff99, transparent);
+    animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* رأس الراديو */
+.radio-header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(0, 255, 153, 0.3);
+    padding-bottom: 15px;
+}
+
+.radio-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ff99;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+}
+
+.radio-subtitle {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+/* حالة البث الديناميكية */
+.status-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.live-bulb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.live-bulb.live {
+    background-color: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+    animation: pulse 1.5s infinite;
+}
+
+.live-bulb.off {
+    background-color: #666;
+}
+
+.live-bulb.loading {
+    background-color: #ffcc00;
+    box-shadow: 0 0 10px #ffcc00;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.status-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.status-text.playing {
+    color: #00ff99;
+}
+
+.status-text.stopped {
+    color: #aaa;
+}
+
+.status-text.reconnecting {
+    color: #ffcc00;
+}
+
+/* عناصر التحكم */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.control-btn {
+    background: linear-gradient(to bottom, #00cc77, #00994c);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    font-size: 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn:hover {
+    background: linear-gradient(to bottom, #00ff99, #00cc77);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 255, 153, 0.5);
+}
+
+.control-btn:active {
+    transform: translateY(1px);
+}
+
+.control-btn:disabled {
+    background: #444;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#pause {
+    background: linear-gradient(to bottom, #ff5555, #cc0000);
+}
+
+#pause:hover {
+    background: linear-gradient(to bottom, #ff7777, #ff0000);
+}
+
+/* تحكم الصوت */
+.volume-control {
+    margin: 25px 0;
+    padding: 15px;
+    background: rgba(0, 30, 15, 0.5);
+    border-radius: 15px;
+}
+
+.volume-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.volume-label {
+    font-size: 16px;
+    color: #aaa;
+}
+
+.mute-btn {
+    background: none;
+    border: 1px solid rgba(0, 255, 153, 0.5);
+    color: #00ff99;
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.mute-btn:hover {
+    background: rgba(0, 255, 153, 0.1);
+}
+
+.mute-btn.muted {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: #ff5555;
+    color: #ff5555;
+}
+
+.volume-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.volume-icon {
+    font-size: 20px;
+    color: #00ff99;
+    min-width: 24px;
+}
+
+.volume-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #00ff99;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 153, 0.7);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #00ff99;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(0, 255, 153, 0.7);
+}
+
+/* موجات الراديو */
+.radio-waves {
+    height: 60px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgba(0, 10, 5, 0.5);
+    border: 1px solid rgba(0, 255, 153, 0.2);
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    background: linear-gradient(to top, transparent, #00ff99);
+    border-radius: 50%;
+    opacity: 0.7;
+    transition: transform 0.5s ease;
+}
+
+.wave.active {
+    animation: waveMove 3s infinite ease-in-out;
+}
+
+@keyframes waveMove {
+    0%, 100% { transform: translateX(0) scaleY(1); }
+    50% { transform: translateX(10px) scaleY(1.2); }
+}
+
+/* مؤشر الاستماع */
+.listen-time {
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    background: rgba(0, 30, 15, 0.3);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+#timer {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00ff99;
+    margin-top: 5px;
+}
+
+/* تحسينات للجوال */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .radio-container {
+        padding: 20px 15px;
+    }
+    
+    .control-btn {
+        padding: 16px 20px;
+        min-width: 110px;
+        font-size: 16px;
+    }
+    
+    .controls {
+        gap: 10px;
+    }
+    
+    .radio-title {
+        font-size: 22px;
+    }
+}
+
+/* منع الشاشة من النوم */
+.wake-lock-active::after {
+    content: '🔒 الشاشة نشطة';
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #00ff99;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    z-index: 1000;
+}
+
+/* شريط التقدم */
+.progress-container {
+    margin: 15px 0;
+    display: none;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #00ff99, #00994c);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* رسائل النظام */
+.system-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    background: rgba(0, 20, 10, 0.9);
+    color: #00ff99;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 255, 153, 0.5);
+    text-align: center;
+    z-index: 1000;
+    transform: translateY(-100px);
+    transition: transform 0.5s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.system-message.show {
+    transform: translateY(0);
+}
+
+/* أزرار إضافية */
+.extra-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.extra-btn {
+    background: rgba(0, 255, 153, 0.1);
+    border: 1px solid rgba(0, 255, 153, 0.3);
+    color: #00ff99;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.extra-btn:hover {
+    background: rgba(0, 255, 153, 0.2);
+}
+
+/* التطبيق كمثبت (PWA) */
+.install-prompt {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 20, 10, 0.95);
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #00ff99;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    max-width: 300px;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.install-prompt.hidden {
+    display: none;
+}
+
+.install-btn {
+    background: linear-gradient(to bottom, #00cc77, #00994c);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="radio-container">
+    <div class="radio-header">
+        <h1 class="radio-title">📻 راديو الشيخ المنشاوي</h1>
+        <p class="radio-subtitle">تلاوات مُجَوَّدة - بث مباشر من المصحف المرتل</p>
+    </div>
+    
+    <!-- حالة البث الديناميكية -->
+    <div class="status-container">
+        <div class="live-bulb off" id="liveBulb"></div>
+        <div class="status-text stopped" id="statusText">تم الإيقاف</div>
+    </div>
+    
+    <!-- موجات الراديو -->
+    <div class="radio-waves" id="radioWaves">
+        <div class="wave" style="width: 80%; left: 10%;"></div>
+        <div class="wave" style="width: 60%; left: 20%;"></div>
+        <div class="wave" style="width: 40%; left: 30%;"></div>
+    </div>
+    
+    <!-- عناصر التحكم الأساسية -->
+    <div class="controls">
+        <button class="control-btn" id="play">
+            <span>▶ تشغيل</span>
+        </button>
+        <button class="control-btn" id="pause" disabled>
+            <span>⏸ إيقاف</span>
+        </button>
+    </div>
+    
+    <!-- تحكم الصوت -->
+    <div class="volume-control">
+        <div class="volume-header">
+            <span class="volume-label">مستوى الصوت</span>
+            <button class="mute-btn" id="muteBtn">🔇 كتم</button>
+        </div>
+        <div class="volume-slider-container">
+            <span class="volume-icon">🔊</span>
+            <input type="range" min="0" max="100" value="80" class="volume-slider" id="volumeSlider">
+        </div>
+    </div>
+    
+    <!-- مؤشر وقت الاستماع -->
+    <div class="listen-time">
+        <div>وقت الاستماع</div>
+        <div id="timer">00:00:00</div>
+    </div>
+    
+    <!-- أزرار إضافية -->
+    <div class="extra-controls">
+        <button class="extra-btn" id="shareBtn">📤 مشاركة</button>
+        <button class="extra-btn" id="themeBtn">🌙 وضع ليلي</button>
+        <button class="extra-btn" id="infoBtn">ℹ️ معلومات</button>
+    </div>
+</div>
+
+<!-- رسائل النظام -->
+<div class="system-message" id="systemMessage"></div>
+
+<!-- نافذة التثبيت -->
+<div class="install-prompt hidden" id="installPrompt">
+    <p>هل ترغب في تثبيت تطبيق راديو المنشاوي على جهازك؟</p>
+    <button class="install-btn" id="installBtn">تثبيت التطبيق</button>
+    <button class="extra-btn" style="margin-top: 5px; width: 100%;" id="cancelInstall">لاحقاً</button>
+</div>
+
+<script>
+// العناصر الرئيسية
+const audio = new Audio();
+const playBtn = document.getElementById('play');
+const pauseBtn = document.getElementById('pause');
+const volumeSlider = document.getElementById('volumeSlider');
+const muteBtn = document.getElementById('muteBtn');
+const liveBulb = document.getElementById('liveBulb');
+const statusText = document.getElementById('statusText');
+const radioWaves = document.getElementById('radioWaves');
+const waves = document.querySelectorAll('.wave');
+const timerDisplay = document.getElementById('timer');
+const systemMessage = document.getElementById('systemMessage');
+const shareBtn = document.getElementById('shareBtn');
+const themeBtn = document.getElementById('themeBtn');
+const infoBtn = document.getElementById('infoBtn');
+const installPrompt = document.getElementById('installPrompt');
+const installBtn = document.getElementById('installBtn');
+const cancelInstall = document.getElementById('cancelInstall');
+
+// المتغيرات
+let isPlaying = false;
+let isMuted = false;
+let listenTimer = 0;
+let timerInterval = null;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+let deferredPrompt = null;
+let wakeLock = null;
+
+// مصدر البث
+const radioStream = "https://backup.qurango.net/radio/mohammed_siddiq_alminshawi_mojawwad";
+
+// تهيئة الصوت
+audio.src = radioStream;
+audio.preload = "none";
+audio.crossOrigin = "anonymous";
+
+// استعادة إعدادات المستخدم من localStorage
+function loadUserSettings() {
+    const savedVolume = localStorage.getItem('radioVolume');
+    const savedMute = localStorage.getItem('radioMuted');
+    
+    if (savedVolume) {
+        volumeSlider.value = savedVolume;
+        audio.volume = savedVolume / 100;
+    } else {
+        audio.volume = volumeSlider.value / 100;
+    }
+    
+    if (savedMute === 'true') {
+        isMuted = true;
+        audio.muted = true;
+        muteBtn.textContent = '🔊 إلغاء الكتم';
+        muteBtn.classList.add('muted');
+    }
+}
+
+// حفظ إعدادات المستخدم
+function saveUserSettings() {
+    localStorage.setItem('radioVolume', volumeSlider.value);
+    localStorage.setItem('radioMuted', isMuted);
+}
+
+// تحديث حالة البث والمصباح
+function updateStatus(status) {
+    // إزالة جميع الفئات
+    liveBulb.classList.remove('live', 'off', 'loading');
+    statusText.classList.remove('playing', 'stopped', 'reconnecting');
+    
+    // تحديث حسب الحالة
+    switch(status) {
+        case 'playing':
+            liveBulb.classList.add('live');
+            statusText.classList.add('playing');
+            statusText.textContent = 'يتم البث الآن';
+            waves.forEach(wave => wave.classList.add('active'));
+            break;
+            
+        case 'stopped':
+            liveBulb.classList.add('off');
+            statusText.classList.add('stopped');
+            statusText.textContent = 'تم الإيقاف';
+            waves.forEach(wave => wave.classList.remove('active'));
+            break;
+            
+        case 'reconnecting':
+            liveBulb.classList.add('loading');
+            statusText.classList.add('reconnecting');
+            statusText.textContent = 'جاري إعادة الاتصال...';
+            waves.forEach(wave => wave.classList.add('active'));
+            break;
+            
+        case 'error':
+            liveBulb.classList.add('off');
+            statusText.classList.add('stopped');
+            statusText.textContent = 'خطأ في الاتصال';
+            waves.forEach(wave => wave.classList.remove('active'));
+            break;
+    }
+}
+
+// تشغيل الصوت
+function playRadio() {
+    if (isPlaying) return;
+    
+    updateStatus('reconnecting');
+    
+    // محاولة تشغيل الصوت
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isPlaying = true;
+            updateStatus('playing');
+            playBtn.disabled = true;
+            pauseBtn.disabled = false;
+            
+            // بدء عداد وقت الاستماع
+            startListenTimer();
+            
+            // تفعيل Wake Lock لمنع الشاشة من النوم
+            requestWakeLock();
+            
+            // إظهار رسالة نجاح
+            showMessage('تم بدء البث بنجاح');
+            
+            // إعادة تعيين محاولات إعادة الاتصال
+            reconnectAttempts = 0;
+        }).catch(error => {
+            console.error('خطأ في التشغيل:', error);
+            updateStatus('error');
+            showMessage('خطأ في تشغيل البث. تأكد من اتصالك بالإنترنت.');
+        });
+    }
+}
+
+// إيقاف الصوت
+function pauseRadio() {
+    if (!isPlaying) return;
+    
+    audio.pause();
+    isPlaying = false;
+    updateStatus('stopped');
+    playBtn.disabled = false;
+    pauseBtn.disabled = true;
+    
+    // إيقاف عداد وقت الاستماع
+    stopListenTimer();
+    
+    // إلغاء Wake Lock
+    releaseWakeLock();
+    
+    showMessage('تم إيقاف البث');
+}
+
+// بدء عداد وقت الاستماع
+function startListenTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    
+    timerInterval = setInterval(() => {
+        listenTimer++;
+        updateTimerDisplay();
+    }, 1000);
+}
+
+// إيقاف عداد وقت الاستماع
+function stopListenTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+// تحديث عرض المؤقت
+function updateTimerDisplay() {
+    const hours = Math.floor(listenTimer / 3600);
+    const minutes = Math.floor((listenTimer % 3600) / 60);
+    const seconds = listenTimer % 60;
+    
+    timerDisplay.textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// إعادة الاتصال التلقائي عند انقطاع البث
+function setupAutoReconnect() {
+    audio.addEventListener('error', () => {
+        if (isPlaying) {
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                showMessage(`انقطع الاتصال. جاري إعادة المحاولة (${reconnectAttempts}/${maxReconnectAttempts})...`);
+                
+                // تحديث الحالة
+                updateStatus('reconnecting');
+                
+                // إعادة المحاولة بعد 3 ثواني
+                setTimeout(() => {
+                    if (isPlaying) {
+                        audio.src = radioStream;
+                        playRadio();
+                    }
+                }, 3000);
+            } else {
+                showMessage('فشل الاتصال بعد عدة محاولات. الرجاء تحديث الصفحة.');
+                updateStatus('error');
+                isPlaying = false;
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopListenTimer();
+                releaseWakeLock();
+            }
+        }
+    });
+    
+    // الكشف عن توقف البث
+    audio.addEventListener('stalled', () => {
+        if (isPlaying) {
+            showMessage('جاري استعادة الاتصال...');
+            updateStatus('reconnecting');
+        }
+    });
+    
+    // استئناف البث بعد التوقف
+    audio.addEventListener('playing', () => {
+        if (isPlaying) {
+            showMessage('تم استعادة الاتصال');
+            updateStatus('playing');
+            reconnectAttempts = 0;
+        }
+    });
+}
+
+// التحكم في مستوى الصوت
+volumeSlider.addEventListener('input', () => {
+    audio.volume = volumeSlider.value / 100;
+    
+    // إلغاء الكتم إذا كان مفعلاً وتم تغيير مستوى الصوت
+    if (isMuted) {
+        isMuted = false;
+        audio.muted = false;
+        muteBtn.textContent = '🔇 كتم';
+        muteBtn.classList.remove('muted');
+    }
+    
+    saveUserSettings();
+});
+
+// زر الكتم
+muteBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    audio.muted = isMuted;
+    
+    if (isMuted) {
+        muteBtn.textContent = '🔊 إلغاء الكتم';
+        muteBtn.classList.add('muted');
+    } else {
+        muteBtn.textContent = '🔇 كتم';
+        muteBtn.classList.remove('muted');
+    }
+    
+    saveUserSettings();
+});
+
+// تفعيل Wake Lock لمنع الشاشة من النوم
+async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            document.body.classList.add('wake-lock-active');
+            
+            wakeLock.addEventListener('release', () => {
+                document.body.classList.remove('wake-lock-active');
+            });
+        } catch (err) {
+            console.error('فشل تفعيل Wake Lock:', err);
+        }
+    }
+}
+
+// إلغاء Wake Lock
+function releaseWakeLock() {
+    if (wakeLock !== null) {
+        wakeLock.release().then(() => {
+            wakeLock = null;
+            document.body.classList.remove('wake-lock-active');
+        });
+    }
+}
+
+// إظهار رسائل النظام
+function showMessage(message) {
+    systemMessage.textContent = message;
+    systemMessage.classList.add('show');
+    
+    setTimeout(() => {
+        systemMessage.classList.remove('show');
+    }, 3000);
+}
+
+// مشاركة الراديو
+shareBtn.addEventListener('click', () => {
+    if (navigator.share) {
+        navigator.share({
+            title: 'راديو الشيخ المنشاوي',
+            text: 'استمع إلى تلاوات الشيخ محمد صديق المنشاوي المجودة',
+            url: window.location.href
+        }).then(() => {
+            showMessage('تمت المشاركة بنجاح');
+        }).catch(error => {
+            console.error('خطأ في المشاركة:', error);
+        });
+    } else {
+        // نسخ الرابط إذا لم يكن Web Share API مدعوماً
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showMessage('تم نسخ الرابط إلى الحافظة');
+        }).catch(error => {
+            console.error('خطأ في نسخ الرابط:', error);
+        });
+    }
+});
+
+// تبديل الوضع الليلي/النهاري
+themeBtn.addEventListener('click', () => {
+    if (document.body.style.backgroundColor === 'rgb(0, 0, 0)') {
+        // العودة للوضع الأصلي
+        document.body.style.background = 'radial-gradient(circle, #001a10, #000)';
+        themeBtn.textContent = '🌙 وضع ليلي';
+        showMessage('تم تفعيل الوضع النهاري');
+    } else {
+        // تفعيل الوضع الليلي
+        document.body.style.background = '#000';
+        themeBtn.textContent = '☀️ وضع نهاري';
+        showMessage('تم تفعيل الوضع الليلي');
+    }
+});
+
+// معلومات عن التطبيق
+infoBtn.addEventListener('click', () => {
+    showMessage('راديو الشيخ محمد صديق المنشاوي - تلاوات مجودة - البث مباشر 24/7');
+});
+
+// تشغيل تلقائي عند أول تفاعل (خاصة للجوال)
+let firstInteraction = false;
+const firstInteractionEvents = ['click', 'touchstart', 'keydown'];
+
+firstInteractionEvents.forEach(eventType => {
+    document.addEventListener(eventType, () => {
+        if (!firstInteraction) {
+            firstInteraction = true;
+            loadUserSettings();
+            setupAutoReconnect();
+            
+            // محاولة التشغيل التلقائي (اختياري)
+            // playRadio();
+        }
+    }, { once: true });
+});
+
+// تثبيت التطبيق (PWA)
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // إظهار نافذة التثبيت بعد 5 ثواني
+    setTimeout(() => {
+        if (deferredPrompt) {
+            installPrompt.classList.remove('hidden');
+        }
+    }, 5000);
+});
+
+installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            showMessage('تم تثبيت التطبيق بنجاح');
+        }
+        
+        deferredPrompt = null;
+        installPrompt.classList.add('hidden');
+    }
+});
+
+cancelInstall.addEventListener('click', () => {
+    installPrompt.classList.add('hidden');
+});
+
+// إعداد الأحداث
+playBtn.addEventListener('click', playRadio);
+pauseBtn.addEventListener('click', pauseRadio);
+
+// تهيئة أولية
+updateStatus('stopped');
+loadUserSettings();
+
+// تهيئة موجات الراديو
+waves.forEach(wave => {
+    wave.style.height = `${30 + Math.random() * 40}%`;
+});
+
+// تهيئة مؤقت وقت الاستماع
+updateTimerDisplay();
+</script>
+
+<!-- ملف التثبيت (PWA) -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => {
+            console.log('فشل تسجيل Service Worker:', err);
+        });
+    });
+}
+
+// ملف Manifest
+const manifest = {
+    "name": "راديو الشيخ المنشاوي",
+    "short_name": "راديو المنشاوي",
+    "description": "تلاوات الشيخ محمد صديق المنشاوي المجودة - بث مباشر",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#001a10",
+    "theme_color": "#001a10",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+};
+
+// إنشاء ملف manifest ديناميكياً
+const manifestElement = document.createElement('link');
+manifestElement.rel = 'manifest';
+manifestElement.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+document.head.appendChild(manifestElement);
+</script>
+
+</body>
+</html>
